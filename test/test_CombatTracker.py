@@ -58,7 +58,6 @@ def test_set_character_stat():
 
 
 def test_add_character_stat():
-    pass
     testname = "testname"
     testclass = "testclass"
     testrace = "testrace"
