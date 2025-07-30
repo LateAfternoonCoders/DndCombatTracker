@@ -1,6 +1,7 @@
 from backend.models.characterStats import CharacterStats
 from backend.combactTracker import CombatTracker
 from backend.models.character import Character
+import pytest
 
 
 def test_add_character():
@@ -52,9 +53,21 @@ def test_remove_specific_character():
     assert result[1].raceName == "testrace2"
 
 
-# TODO Add test to validate the set_stats using out of bounds values
-def test_set_character_stat():
-    pass
+@pytest.mark.parametrize(
+        "level, hp, initiative, armorClass, speed, expectedError",
+        [
+            (-2, 3, 4, 5, 6, "Invalid level!"),
+            (2, -3, 4, 5, 6, "Invalid hp!"),
+            (2, 3, -4, 5, 6, "Invalid initiative!"),
+            (2, 3, 4, -5, 6, "Invalid armor class!"),
+            (2, 3, 4, 5, -6, "Invalid speed!")
+        ])
+def test_fail_character_stats(
+        level, hp, initiative, armorClass, speed, expectedError):
+
+    with pytest.raises(Exception) as ex_info:
+        CharacterStats(level, hp, initiative, armorClass, speed)
+    assert str(ex_info.value) == expectedError
 
 
 def test_add_character_stat():
