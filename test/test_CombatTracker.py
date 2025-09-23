@@ -1,6 +1,7 @@
 from backend.models.characterStats import CharacterStats
 from backend.combactTracker import CombatTracker
 from backend.models.character import Character
+from backend.models.user import Player, Master
 import pytest
 
 
@@ -55,13 +56,13 @@ def test_remove_specific_character():
 
 @pytest.mark.parametrize(
         "level, hp, initiative, armorClass, speed, expectedError",
-        [
+        (
             (-2, 3, 4, 5, 6, "Invalid level!"),
             (2, -3, 4, 5, 6, "Invalid hp!"),
             (2, 3, -4, 5, 6, "Invalid initiative!"),
             (2, 3, 4, -5, 6, "Invalid armor class!"),
             (2, 3, 4, 5, -6, "Invalid speed!")
-        ])
+        ))
 def test_fail_character_stats(
         level, hp, initiative, armorClass, speed, expectedError):
 
@@ -94,3 +95,49 @@ def test_add_character_stat():
     assert readStats.initiative == initiative
     assert readStats.armorClass == armorClass
     assert readStats.speed == speed
+
+
+def test_add_players():
+    tracker = CombatTracker()
+    player_names = ("Al", "Bi", "Ga", "Gg", "Pa", "St")
+    players = list(map(Player, player_names))
+
+    for p in players:
+        tracker.add_user(p)
+
+    tracker.add_user(Master("Ja"))
+
+    assert all(
+        [x.name == y for (x, y) in zip(tracker.get_players(), player_names)]
+        )
+    assert all(
+        [x.role == 'Player' for x in tracker.get_players()]
+        )
+
+
+def test_add_master():
+    tracker = CombatTracker()
+    player_names = ("Al", "Bi", "Ga", "Gg", "Pa", "St")
+    players = list(map(Player, player_names))
+
+    for p in players:
+        tracker.add_user(p)
+
+    tracker.add_user(Master("Ja"))
+
+    assert tracker.get_master().name == "Ja"
+    assert tracker.get_master().role == "Master"
+
+
+def test_fail_add_multiple_masters():
+    tracker = CombatTracker()
+
+    tracker.add_user(Master("Ja"))
+
+    with pytest.raises(Exception) as ex_info:
+        tracker.add_user(Master("Jb"))
+    assert str(ex_info.value) == "Master already present!"
+
+
+def test_assign_character_to_player():
+    pass
