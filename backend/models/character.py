@@ -11,5 +11,5 @@ class Character:
     def set_stats(self, stats: CharacterStats):
         self.stats = stats
 
-    def get_stats(self):
+    def get_stats(self) -> CharacterStats:
         return self.stats
