@@ -6,6 +6,7 @@ class Character:
         self.name = name
         self.className = className
         self.raceName = raceName
+        self._ID = None
 
     def set_stats(self, stats: CharacterStats):
         self.stats = stats
